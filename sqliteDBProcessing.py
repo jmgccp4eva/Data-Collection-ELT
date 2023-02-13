@@ -51,6 +51,22 @@ def insert_into_table(db,table_name, fields, values, types):
     conn.commit()
     conn.close()
 
+def delete_from(db,table,fields,values,types):
+    qry = f"DELETE FROM {table} WHERE "
+    for x in range(0,len(fields)):
+        if x>0:
+            qry+=" AND "
+        if types[x]=='TEXT':
+            qry += f"'{fields[x]}'={values[x]}"
+        else:
+            qry += f"{fields[x]}={values[x]}"
+    print(qry)
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+    cur.execute(qry)
+    conn.commit()
+    conn.close()
+
 # Creates an index
 def create_index(db,table,column,index_name):
     conn = sqlite3.connect(db)
@@ -312,8 +328,7 @@ def update_where(db,table_name, fields, value, types, new_values, where_field):
         if types[a] == 'TEXT':
             temp += '"'
     temp += ' WHERE {}={}'.format(where_field, value)
-    time.sleep(3)
-    conn = sqlite3.connect('6degreesRev1.db')
+    conn = sqlite3.connect(db)
     cur = conn.cursor()
     cur.execute(temp)
     conn.commit()
